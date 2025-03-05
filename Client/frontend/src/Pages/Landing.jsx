@@ -16,7 +16,7 @@ import {
   Smartphone
 } from 'lucide-react';
 
-// Navbar Component
+
 const Navbar = ({ darkMode, toggleDarkMode }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
