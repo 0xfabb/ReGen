@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const { User } = require("../models/user");
 const {
   userSchemaRegister,
   userSchemaLogin,
@@ -8,7 +10,7 @@ const {
 
 const mysecret = process.env.JWT_SECRET || "Pheonix";
 
-router.post("/register", (req, res) => {
+router.post("/register", async (req, res) => {
   const { email, password, fullname, mobile } = req.body;
   const response = userSchemaRegister.safeParse({
     email,
@@ -23,7 +25,16 @@ router.post("/register", (req, res) => {
       errors: response.error.errors,
     });
   }
+  const hashedPassword = await bcrypt.hash(password, 10);
   const token = jwt.sign({ email }, mysecret, { expiresIn: "1h" });
+  const newUser = new User({
+    fullname: fullname,
+    email: email,
+    password: hashedPassword,
+    jwt: token,
+    mobile: mobile,
+  });
+  await newUser.save();
   res.json({
     msg: "Account Created Successfully",
     data: response.data,
@@ -31,12 +42,8 @@ router.post("/register", (req, res) => {
   });
 });
 
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  const recievedToken = req.headers.authorization?.split(" ")[1];
-  if (!recievedToken) {
-    return res.status(401).json({ msg: "No token provided" });
-  }
   const response = userSchemaLogin.safeParse({ email, password });
   if (!response.success) {
     return res.status(401).json({
@@ -44,14 +51,22 @@ router.post("/login", (req, res) => {
       errors: response.error.errors,
     });
   }
-  const verifiedValue = jwt.verify(recievedToken, mysecret);
-  if (verifiedValue.email != email) {
-    return res.status(401).json({ msg: "Invalid token" });
-  }
+  try {
+    const existingUser = await User.findOne({ email });
+    if (!existingUser) {
+      return res.status(401).json({ msg: "Invalid email or password" });
+    }
+    const isMatch = await bcrypt.compare(password, existingUser.password);
+    if (!isMatch) {
+      return res.status(401).json({ msg: "Invalid email or password" });
+    }
+    const token = jwt.sign({ email }, mysecret, { expiresIn: "1h" });
 
-  res.json({
-    msg: "You are Logged in",
-    data: response.data,
-  });
+    existingUser.jwt = token;
+    await existingUser.save();
+    res.json({ msg: "Login successful", token: token });
+  } catch (err) {
+    res.status(500).json({ msg: "Server error", error: err.message });
+  }
 });
 module.exports = router;
