@@ -8,7 +8,7 @@ const Login = () => {
     email: '',
     password: '',
   });
-  
+
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -19,7 +19,7 @@ const Login = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
@@ -28,31 +28,31 @@ const Login = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Email is not valid';
     }
-    
+
     if (!formData.password) {
       newErrors.password = 'Password is required';
     }
-    
+
     return newErrors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
-    
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
         const response = await axios.post(
             "http://localhost:3000/api/v1/auth/login",
@@ -61,7 +61,7 @@ const Login = () => {
           );
           console.log(response)
     } catch (error) {
-      setErrors({ 
+      setErrors({
         form: error.response?.data?.message || 'Invalid email or password. Please try again.'
       });
     } finally {
@@ -81,7 +81,7 @@ const Login = () => {
             <h1 className="text-2xl font-bold text-white">Welcome Back</h1>
             <p className="text-green-50 mt-1">Sign in to continue your waste management journey</p>
           </div>
-          
+
           {/* Form */}
           <div className="p-6">
             {errors.form && (
@@ -89,7 +89,7 @@ const Login = () => {
                 {errors.form}
               </div>
             )}
-            
+
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -106,7 +106,7 @@ const Login = () => {
                 />
                 {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
               </div>
-              
+
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                   Password
@@ -131,7 +131,7 @@ const Login = () => {
                 </div>
                 {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <input
@@ -146,14 +146,14 @@ const Login = () => {
                     Remember me
                   </label>
                 </div>
-                
+
                 <div className="text-sm">
                   <Link to="/forgot-password" className="font-medium text-green-600 hover:text-green-700">
                     Forgot your password?
                   </Link>
                 </div>
               </div>
-              
+
               <div>
                 <button
                   type="submit"
@@ -170,7 +170,7 @@ const Login = () => {
                 </button>
               </div>
             </form>
-            
+
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Don't have an account?{' '}
@@ -181,7 +181,7 @@ const Login = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="mt-6 text-center">
           <p className="text-xs text-gray-500">
             By signing in, you agree to our{' '}

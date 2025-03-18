@@ -16,7 +16,7 @@ router.post("/register", async (req, res) => {
     email,
     password,
     fullname,
-    mobile,
+    
   });
 
   if (!response.success) {
@@ -65,6 +65,8 @@ router.post("/login", async (req, res) => {
     existingUser.jwt = token;
     await existingUser.save();
     res.json({ msg: "Login successful", token: token });
+    console.log("Login Sucsess");
+    
   } catch (err) {
     res.status(500).json({ msg: "Server error", error: err.message });
   }
