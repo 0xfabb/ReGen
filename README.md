@@ -35,3 +35,7 @@ System designed to handle large numbers of users, devices, and data.
 Robust security measures to protect sensitive information.
 
 Maintenance and Sustainability: A long-term maintenance plan for hardware and software will be implemented. Sustainable practices, like using solar panels for bin power, will be prioritized.
+
+
+
+## Now it's time to add the GSM functionality and now it's time to get the site up and running... it's AWS time...
