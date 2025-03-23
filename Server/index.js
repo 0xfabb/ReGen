@@ -20,6 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/api/v1", homeRoutes);
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1", homeRoutes);
 
 const url =
   process.env.MONGO_URI ||
